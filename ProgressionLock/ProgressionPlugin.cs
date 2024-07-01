@@ -33,7 +33,7 @@ namespace ProgressionLock
 			[Entities.PirateInvastion] = false,
 			[Entities.FrostLegion] = false,
 			[Entities.MartianMadness] = false,
-			[Entities.LunarPillars] = false,
+			[Entities.MoonLordCountdown] = false,
 			[Entities.OldOnesArmy] = false,
 		};
 
@@ -78,6 +78,7 @@ namespace ProgressionLock
 					[Entities.BloodMoon] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
 					[Entities.SolarEclipse] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
 					[Entities.OldOnesArmy] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
+					[Entities.MoonLordCountdown] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
 				};
 				configFile.Settings = new ProgressionLockerConfig()
 				{
@@ -202,7 +203,7 @@ namespace ProgressionLock
 
 			if (NPC.MoonLordCountdown > 0)
 			{
-				type = Entities.LunarPillars;
+				type = Entities.MoonLordCountdown;
 				if (!ignoreCheck[type])
 				{
 					if (!config.TryGetRecent(type, out LockDate date) || !date.AllowedToSpawn)
@@ -221,7 +222,7 @@ namespace ProgressionLock
 				}
 			}
 			else
-				ignoreCheck[Entities.LunarPillars] = false;
+				ignoreCheck[Entities.MoonLordCountdown] = false;
 
 			if (Terraria.GameContent.Events.DD2Event.Ongoing)
 			{
@@ -409,7 +410,7 @@ namespace ProgressionLock
 								TSPlayer.Server.SetFrostMoon(false);
 								DisableInvasion();
 								break;
-							case Entities.LunarPillars:
+							case Entities.MoonLordCountdown:
 								NPC.MoonLordCountdown = 0;
 								NPC.TowerActiveNebula = false;
 								NPC.TowerActiveSolar = false;

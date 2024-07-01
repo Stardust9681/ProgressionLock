@@ -43,7 +43,7 @@ namespace ProgressionLock
 		MartianMadness = -10,
 		//Martians = -10,
 
-		LunarPillars = -11,
+		MoonLordCountdown = -11,
 		//CelestialPillars = -11,
 		//Pillars = -11,
 		//Lunar = -11,
