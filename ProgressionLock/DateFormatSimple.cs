@@ -15,17 +15,20 @@ namespace ProgressionLock
 		public byte Day;
 		[JsonInclude]
 		public short Year;
+		[JsonInclude]
+		public byte Hours;
 
 		public SimpleDateFormat(DateTime date)
 		{
 			Month = (Month)date.Month;
 			Day = (byte)date.Day;
 			Year = (short)date.Year;
+			Hours = (byte)date.TimeOfDay.Hours;
 		}
 
 		public DateTime Convert()
 		{
-			return new DateTime((int)Year, (int)Month, (int)Day);
+			return new DateTime((int)Year, (int)Month, (int)Day, (int)Hours, 0, 0);
 		}
 	}
 

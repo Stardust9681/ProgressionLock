@@ -7,7 +7,6 @@ using TShockAPI.Hooks;
 using System.IO.Streams;
 
 using Microsoft.Xna.Framework;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace ProgressionLock
 {
@@ -17,10 +16,54 @@ namespace ProgressionLock
 		public override string Name => "Progressionlock";
 		public override string Author => "Stardust";
 		public override string Description => "Provides a means by which to prevent bosses and events from spawning";
-		public override Version Version => new Version(1, 0);
+		public override Version Version => new Version(1, 1);
 
-		private ProgressionLockerConfig config;
-		private LockerConfigFile configFile;
+		private static ProgressionLockerConfig config;
+		public static ProgressionLockerConfig Config
+		{
+			get => config!;
+			private set => config = value;
+		}
+		private static LockerConfigFile configFile;
+
+		private static void RefreshConfig()
+		{
+			configFile = new LockerConfigFile();
+			if (!configFile.TryRead(LockerConfigFile.FilePath, out ProgressionLockerConfig newConfig))
+			{
+				Config = newConfig;
+				Directory.CreateDirectory(LockerConfigFile.DirectoryPath);
+				Config.locks = GetDefaults();
+			}
+			configFile.Settings = Config;
+			configFile.Write(LockerConfigFile.FilePath);
+			configFile.TryRead(LockerConfigFile.FilePath, out config);
+		}
+
+		public static void WriteConfig()
+		{
+			configFile.Settings = Config;
+			configFile.Write(LockerConfigFile.FilePath);
+		}
+		public static bool TryReadConfig()
+		{
+			configFile = new LockerConfigFile();
+			if (!configFile.TryRead(LockerConfigFile.FilePath, out config))
+			{
+                Console.WriteLine("Failed to read Config file: reloading.");
+                Directory.CreateDirectory(LockerConfigFile.DirectoryPath);
+				Config = new ProgressionLockerConfig()
+				{
+					serverStartTime = new SimpleDateFormat(DateTime.Now),
+					locks = GetDefaults(),
+				};
+				return false;
+			}
+			return true;
+		}
+
+		public static Color ErrorColour => Color.IndianRed;
+		public static Color InfoColor => Color.LightSeaGreen;
 
 		private Dictionary<Entities, bool> ignoreCheck = new Dictionary<Entities, bool>()
 		{
@@ -41,53 +84,96 @@ namespace ProgressionLock
 		{
 		}
 
+		private static Dictionary<Entities, LockDate[]> GetDefaults()
+		{
+			return new Dictionary<Entities, LockDate[]>()
+			{
+				[Entities.KingSlime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
+				[Entities.SlimeRain] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
+				[Entities.EyeOfCthulhu] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
+
+				[Entities.BrainOfCthulhu] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
+				[Entities.EaterOfWorlds] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
+				[Entities.GoblinArmy] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
+
+				[Entities.QueenBee] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
+				[Entities.Deerclops] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
+				[Entities.Skeletron] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
+
+				[Entities.WallOfFlesh] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 3, AllowedToSpawn = true } },
+				[Entities.PirateInvastion] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 3, AllowedToSpawn = true } },
+
+				[Entities.Twins] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
+				[Entities.Destroyer] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
+				[Entities.SkeletronPrime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
+
+				[Entities.QueenSlime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 5, AllowedToSpawn = true } },
+				[Entities.DukeFishron] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 5, AllowedToSpawn = true } },
+
+				[Entities.Plantera] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
+				[Entities.FrostMoon] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
+				[Entities.PumpkinMoon] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
+
+				[Entities.EmpressOfLight] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 7, AllowedToSpawn = true } },
+				[Entities.Golem] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 7, AllowedToSpawn = true } },
+
+				[Entities.MartianMadness] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 8, AllowedToSpawn = true } },
+
+				[Entities.LunaticCultist] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 9, AllowedToSpawn = true } },
+				[Entities.MoonLord] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 9, AllowedToSpawn = true } },
+
+				[Entities.BloodMoon] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
+				[Entities.SolarEclipse] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
+				[Entities.OldOnesArmy] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
+				[Entities.MoonLordCountdown] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
+			};
+		}
+		public static void ResetConfig(byte reset)
+		{
+			switch (reset)
+			{
+				case 0: //Time
+					config.serverStartTime = new SimpleDateFormat(DateTime.Now);
+					break;
+				case 1: //Lock
+					config.locks = GetDefaults();
+					break;
+				case 2: //Both
+					config.serverStartTime = new SimpleDateFormat(DateTime.Now);
+					config.locks = GetDefaults();
+					break;
+				default:
+					return;
+			}
+			configFile.Settings = config;
+			configFile.Write(LockerConfigFile.FilePath);
+			configFile.TryRead(LockerConfigFile.FilePath, out config);
+		}
+
 		public override void Initialize()
 		{
 			configFile = new LockerConfigFile();
 			if (!configFile.TryRead(LockerConfigFile.FilePath, out config))
 			{
-				Directory.CreateDirectory(LockerConfigFile.DirectoryPath);
-				//Establishing default values
-				IReadOnlyDictionary<Entities, LockDate[]> dict = new Dictionary<Entities, LockDate[]>()
+				if (config is default(ProgressionLockerConfig))
 				{
-					[Entities.KingSlime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
-					[Entities.SlimeRain] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
-					[Entities.EyeOfCthulhu] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
-					[Entities.BrainOfCthulhu] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
-					[Entities.EaterOfWorlds] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
-					[Entities.GoblinArmy] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
-					[Entities.QueenBee] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
-					[Entities.Deerclops] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
-					[Entities.Skeletron] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 3, AllowedToSpawn = true } },
-					[Entities.WallOfFlesh] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 3, AllowedToSpawn = true } },
-					[Entities.PirateInvastion] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 3, AllowedToSpawn = true } },
-					[Entities.DukeFishron] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
-					[Entities.QueenSlime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
-					[Entities.Twins] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 5, AllowedToSpawn = true } },
-					[Entities.Destroyer] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 5, AllowedToSpawn = true } },
-					[Entities.SkeletronPrime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 5, AllowedToSpawn = true } },
-					[Entities.Plantera] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
-					[Entities.FrostMoon] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
-					[Entities.PumpkinMoon] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
-					[Entities.EmpressOfLight] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 7, AllowedToSpawn = true } },
-					[Entities.Golem] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 8, AllowedToSpawn = true } },
-					[Entities.MartianMadness] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 8, AllowedToSpawn = true } },
-					[Entities.LunaticCultist] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 9, AllowedToSpawn = true } },
-					[Entities.MoonLord] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 9, AllowedToSpawn = true } },
-
-					[Entities.BloodMoon] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
-					[Entities.SolarEclipse] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
-					[Entities.OldOnesArmy] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
-					[Entities.MoonLordCountdown] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
-				};
-				configFile.Settings = new ProgressionLockerConfig()
-				{
-					serverStartDate = new SimpleDateFormat(DateTime.Now),
-					locks = dict,
-				};
-				configFile.Write(LockerConfigFile.FilePath);
-				configFile.TryRead(LockerConfigFile.FilePath, out config);
+					Directory.CreateDirectory(LockerConfigFile.DirectoryPath);
+					configFile.Settings = new ProgressionLockerConfig()
+					{
+						serverStartTime = new SimpleDateFormat(DateTime.Now),
+						locks = GetDefaults(),
+					};
+					configFile.Write(LockerConfigFile.FilePath);
+					configFile.TryRead(LockerConfigFile.FilePath, out config);
+				}
 			}
+			
+			//I don't want all the commands for this plugin cluttering the THREE PAGES of commands that already exist
+			TShockAPI.Commands.ChatCommands.Add(new Command(Commands.LockCommands, "lock", "proglock")
+			{
+				HelpText = "ProgressionLock plugin command system. Try \"/lock commandlist\" to see all available commands!",
+			});
+
 			//ServerApi.Hooks.NetGetData.Register(this, OnGetData);
 			GeneralHooks.ReloadEvent += OnReload;
 			ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -302,7 +388,7 @@ namespace ProgressionLock
 			}
 			catch (Exception x)
 			{
-				TShock.Log.Error("Failed to reload ProgressionLock config");
+				TShock.Log.Error($"Failed to reload ProgressionLock config: [ERROR] {x.Message}");
 			}
 		}
 		private void OnGetData(GetDataEventArgs args)
