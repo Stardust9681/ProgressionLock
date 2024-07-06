@@ -169,7 +169,7 @@ namespace ProgressionLock
 			}
 			
 			//I don't want all the commands for this plugin cluttering the THREE PAGES of commands that already exist
-			TShockAPI.Commands.ChatCommands.Add(new Command(Commands.LockCommands, "lock", "proglock")
+			TShockAPI.Commands.ChatCommands.Add(new Command(LockPermissions.UseLockCommands, Commands.LockCommands, "lock", "proglock")
 			{
 				HelpText = "ProgressionLock plugin command system. Try \"/lock commandlist\" to see all available commands!",
 			});

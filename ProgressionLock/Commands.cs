@@ -15,7 +15,8 @@ namespace ProgressionLock
 			string[] names = Enum.GetNames(typeof(Entities));
 			match = Entities.UnusedOrError;
 
-			literal = literal.Trim(' ');
+			//literal = literal.Trim(' ');
+			literal = new string(literal.Where(x => !char.IsWhiteSpace(x)).ToArray());
 			bool isAcronym = literal.All(x => char.IsUpper(x));
 			if (isAcronym)
 			{
@@ -32,9 +33,10 @@ namespace ProgressionLock
 			}
 			else
 			{
-				foreach (string name in names)
+				literal = literal.ToLower();
+                foreach (string name in names)
 				{
-					if (Regex.IsMatch(name.ToLower(), literal) || literal.Equals(name.ToLower()))
+                    if (Regex.IsMatch(name.ToLower(), literal) || literal.Equals(name.ToLower()))
 					{
 						match = (Entities)Enum.Parse(typeof(Entities), name, false);
 						return true;
