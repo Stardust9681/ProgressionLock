@@ -8,6 +8,8 @@ using System.IO.Streams;
 
 using Microsoft.Xna.Framework;
 
+using static ProgressionLock.LockDateUtils;
+
 namespace ProgressionLock
 {
 	[ApiVersion(2, 1)]
@@ -15,8 +17,8 @@ namespace ProgressionLock
 	{
 		public override string Name => "Progressionlock";
 		public override string Author => "Stardust";
-		public override string Description => "Provides a means by which to prevent bosses and events from spawning";
-		public override Version Version => new Version(1, 1);
+		public override string Description => "Toggle when bosses and events can or cannot be spawned (by the hour)";
+		public override Version Version => new Version(1, 2);
 
 		private static ProgressionLockerConfig config;
 		public static ProgressionLockerConfig Config
@@ -88,44 +90,46 @@ namespace ProgressionLock
 		{
 			return new Dictionary<Entities, LockDate[]>()
 			{
-				[Entities.KingSlime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
-				[Entities.SlimeRain] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
-				[Entities.EyeOfCthulhu] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 0, AllowedToSpawn = true } },
+				[Entities.KingSlime] =			Construct(HoursFromWeeks(0), true),
+				[Entities.SlimeRain] =			Construct(HoursFromWeeks(0), true),
+				[Entities.EyeOfCthulhu] =		Construct(HoursFromWeeks(0), true),
 
-				[Entities.BrainOfCthulhu] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
-				[Entities.EaterOfWorlds] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
-				[Entities.GoblinArmy] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 1, AllowedToSpawn = true } },
+				[Entities.BrainOfCthulhu] =		Construct(HoursFromWeeks(1), true),
+				[Entities.EaterOfWorlds] =		Construct(HoursFromWeeks(1), true),
+				[Entities.GoblinArmy] =			Construct(HoursFromWeeks(1), true),
 
-				[Entities.QueenBee] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
-				[Entities.Deerclops] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
-				[Entities.Skeletron] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 2, AllowedToSpawn = true } },
+				[Entities.QueenBee] =			Construct(HoursFromWeeks(2), true),
+				[Entities.Deerclops] =			Construct(HoursFromWeeks(2), true),
+				[Entities.Skeletron] =			Construct(HoursFromWeeks(2), true),
 
-				[Entities.WallOfFlesh] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 3, AllowedToSpawn = true } },
-				[Entities.PirateInvastion] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 3, AllowedToSpawn = true } },
+				[Entities.WallOfFlesh] =		Construct(HoursFromWeeks(3), true),
+				[Entities.PirateInvastion] =	Construct(HoursFromWeeks(3), true),
 
-				[Entities.Twins] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
-				[Entities.Destroyer] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
-				[Entities.SkeletronPrime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 4, AllowedToSpawn = true } },
+				[Entities.Twins] =				Construct(HoursFromWeeks(4), true),
+				[Entities.Destroyer] =			Construct(HoursFromWeeks(4), true),
+				[Entities.SkeletronPrime] =		Construct(HoursFromWeeks(4), true),
 
-				[Entities.QueenSlime] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 5, AllowedToSpawn = true } },
-				[Entities.DukeFishron] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 5, AllowedToSpawn = true } },
+				[Entities.QueenSlime] =			Construct(HoursFromWeeks(5), true),
+				[Entities.DukeFishron] =		Construct(HoursFromWeeks(5), true),
 
-				[Entities.Plantera] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
-				[Entities.FrostMoon] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
-				[Entities.PumpkinMoon] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 6, AllowedToSpawn = true } },
+				[Entities.Plantera] =			Construct(HoursFromWeeks(6), true),
+				[Entities.FrostMoon] =			Construct(HoursFromWeeks(6), true),
+				[Entities.PumpkinMoon] =		Construct(HoursFromWeeks(6), true),
 
-				[Entities.EmpressOfLight] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 7, AllowedToSpawn = true } },
-				[Entities.Golem] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 7, AllowedToSpawn = true } },
+				[Entities.EmpressOfLight] =		Construct(HoursFromWeeks(7), true),
+				[Entities.Golem] =				Construct(HoursFromWeeks(7), true),
 
-				[Entities.MartianMadness] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 8, AllowedToSpawn = true } },
+				[Entities.MartianMadness] =		Construct(HoursFromWeeks(8), true),
 
-				[Entities.LunaticCultist] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 9, AllowedToSpawn = true } },
-				[Entities.MoonLord] = new LockDate[] { new LockDate() { HoursFromStart = 168 * 9, AllowedToSpawn = true } },
+				[Entities.LunaticCultist] =		Construct(HoursFromWeeks(9), true),
+				[Entities.MoonLord] =			Construct(HoursFromWeeks(9), true),
 
-				[Entities.BloodMoon] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
-				[Entities.SolarEclipse] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
-				[Entities.OldOnesArmy] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
-				[Entities.MoonLordCountdown] = new LockDate[] { new LockDate() { HoursFromStart = 0, AllowedToSpawn = true } },
+				//Always available
+				[Entities.BloodMoon] =			Construct(0, true),
+				[Entities.SolarEclipse] =		Construct(0, true),
+				[Entities.OldOnesArmy] =		Construct(0, true),
+				[Entities.MoonLordCountdown] =	Construct(0, true),
+				[Entities.FrostLegion] =		Construct(0, true),
 			};
 		}
 		public static void ResetConfig(byte reset)
@@ -168,13 +172,12 @@ namespace ProgressionLock
 				}
 			}
 			
-			//I don't want all the commands for this plugin cluttering the THREE PAGES of commands that already exist
+			//I don't want all the commands for this plugin cluttering the THREE PAGES of commands that already exist, what the HELL tShock!
 			TShockAPI.Commands.ChatCommands.Add(new Command(LockPermissions.UseLockCommands, Commands.LockCommands, "lock", "proglock")
 			{
 				HelpText = "ProgressionLock plugin command system. Try \"/lock commandlist\" to see all available commands!",
 			});
 
-			//ServerApi.Hooks.NetGetData.Register(this, OnGetData);
 			GeneralHooks.ReloadEvent += OnReload;
 			ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
 			ServerApi.Hooks.NpcSpawn.Register(this, OnSpawnNPC);
@@ -188,9 +191,10 @@ namespace ProgressionLock
 			if (type is Entities.UnusedOrError)
 				return;
 
+			TSPlayer.All.SendMessage($"{npc.FullName}", Color.MediumAquamarine);
+
 			if (!config.TryGetRecent(type, out LockDate date) || !date.AllowedToSpawn)
 			{
-				string npcName = npc.FullName;
 				npc.active = false;
 				npc.type = 0;
 				TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", npc.whoAmI);
@@ -209,7 +213,8 @@ namespace ProgressionLock
 				{
 					if (!config.TryGetRecent(type, out LockDate date) || !date.AllowedToSpawn)
 					{
-						TSPlayer.Server.SetBloodMoon(false);
+						Main.StopSlimeRain(false);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
 						TSPlayer.All.SendMessage($"Event \'{type}\' has been disabled.", Color.MediumVioletRed);
 					}
 					else
@@ -329,6 +334,7 @@ namespace ProgressionLock
 
 			if (Main.invasionType > 0)
 			{
+				bool flag = true;
 				switch (Main.invasionType)
 				{
 					case 1:
@@ -341,35 +347,30 @@ namespace ProgressionLock
 						type = Entities.PirateInvastion;
 						break;
 					case 4:
-						type = Entities.PumpkinMoon;
-						break;
-					case 5:
-						type = Entities.FrostMoon;
-						break;
-					case 6:
-						type = Entities.SolarEclipse;
-						break;
-					case 7:
 						type = Entities.MartianMadness;
 						break;
 					default:
-						return;
+						type = Entities.UnusedOrError;
+						flag = false;
+						break;
 				}
-				if (!ignoreCheck[type])
+				if (flag)
 				{
-					if (!config.TryGetRecent(type, out LockDate date) || !date.AllowedToSpawn)
+					if (!ignoreCheck[type])
 					{
-						Main.invasionType = 0;
-						Main.invasionSize = 0;
-						TSPlayer.All.SendMessage($"Event \'{type}\' has been disabled.", Color.MediumVioletRed);
+						if (!config.TryGetRecent(type, out LockDate date) || !date.AllowedToSpawn)
+						{
+							Main.invasionType = 0;
+							Main.invasionSize = 0;
+							TSPlayer.All.SendMessage($"Event \'{type}\' has been disabled.", ErrorColour);
+							TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						}
+						else
+							ignoreCheck[type] = true;
 					}
 					else
-						ignoreCheck[type] = true;
+						ignoreCheck[type] = false;
 				}
-				else
-					ignoreCheck[type] = false;
-
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			}
 		}
 
@@ -391,6 +392,8 @@ namespace ProgressionLock
 				TShock.Log.Error($"Failed to reload ProgressionLock config: [ERROR] {x.Message}");
 			}
 		}
+
+		[ObsoleteAttribute()]
 		private void OnGetData(GetDataEventArgs args)
 		{
 			if (!(args.MsgID.Equals(PacketTypes.SpawnBossorInvasion)
@@ -520,7 +523,6 @@ namespace ProgressionLock
 		{
 			if (disposing)
 			{
-				//ServerApi.Hooks.NetGetData.Deregister(this, OnGetData);
 				GeneralHooks.ReloadEvent -= OnReload;
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
 			}

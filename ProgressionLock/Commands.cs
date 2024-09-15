@@ -483,12 +483,20 @@ namespace ProgressionLock
 			}
 			public bool Call(TSPlayer caller, List<string> args)
 			{
+				bool playerHasPermission = true;
 				foreach (string permission in Permissions)
 					if (!caller.HasPermission(permission))
 					{
-						caller.SendMessage($"Insufficient permissions to invoke command /{CommandNames.First()}", ProgressionPlugin.ErrorColour);
-						return false;
+						playerHasPermission = false;
 					}
+				//Bypass for admins to be allowed to use this plugin's commands
+				if (caller.HasPermission(TShockAPI.Permissions.user))
+					playerHasPermission = true;
+				if (!playerHasPermission)
+				{
+					caller.SendMessage($"Insufficient permissions to invoke command /{CommandNames.First()}", ProgressionPlugin.ErrorColour);
+					return false;
+				}
 				Func.Invoke(caller, args);
 				return true;
 			}
@@ -514,7 +522,7 @@ namespace ProgressionLock
 				init;
 			}
 		}
-		private static List<SubCommand> CommandList = new List<SubCommand>();
+		private static readonly List<SubCommand> CommandList = new List<SubCommand>();
 		public static void LockCommands(CommandArgs args)
 		{
 			List<string> parameters = args.Parameters;
@@ -524,6 +532,7 @@ namespace ProgressionLock
 				LockCommandList(caller, parameters);
 				LockHelp(caller, new List<string>() { "help" });
 				LockSyntax(caller, parameters);
+				return;
 			}
 			string commandName = parameters.First().ToLower();
 			parameters.RemoveAt(0);
@@ -533,6 +542,11 @@ namespace ProgressionLock
 				caller.SendMessage($"Invalid command or syntax, '{commandName} {string.Join(" ", parameters.ToArray())}'", ProgressionPlugin.ErrorColour);
 				return;
 			}
+			//if (parameters.Any(x => x.Length > 40))
+			//{
+			//	caller.SendMessage($"Excessively long input, command rejected.", ProgressionPlugin.ErrorColour);
+			//	return;
+			//}
 			CommandList[cmdIndex].Call(caller, parameters);
 		}
 	}
