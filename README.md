@@ -13,8 +13,8 @@ You may add **MULTIPLE** entries for a given boss or event, in which case, the m
 ## Permissions
 | Permission Name   | Description   |
 | :-  | :-
-| uselockcommands | Allows a group or user to see and use this plugin's commands. |
-| editlockconfig | Grants a group or user access to the commands necessary to change the configuration. |
+| `lock.uselockcommands` | Allows a group or user to see and use this plugin's commands. |
+| `lock.editlockconfig` | Grants a group or user access to the commands necessary to change the configuration. |
 
 ## Commands
 This plugin's commands are all contained within an overarching "/lock" command.
@@ -22,15 +22,15 @@ Following is a list of all commands, their required permissions, and their descr
 
 | Command Name | Permissions Required | Description |
 | :- | :- | :-
-| help | uselockcommands | Provides syntax and help text for a given command. |
-| commandlist | uselockcommands | Offers a list of commands available to the caller. |
-| syntax | uselockcommands | Gives an overaching description of the format used for commands. |
-| bosslist | uselockcommands | Shows a list of all bosses and events by name. |
-| current | uselockcommands | Yields the current availability of a named boss or event. |
-| next | uselockcommands | Tells the next entry for a named boss or event. |
-| servertime | uselockcommands | Returns the number of hours since server start. |
-| starttime | uselockcommands, editlockconfig | Shows start time and date for plugin. When provided a time (in hours), adjusts it by that many hours. |
-| addrule | uselockcommands, editlockconfig | Adds a new entry for a boss or event. You may have multiple entries, whereby the most recent takes presidence. |
-| deletenext | uselockcommands, editlockconfig | Removes the next entry for a boss or event. If this leaves a boss/event with no entries, it cannot be spawned. |
-| deleteall | uselockcommands, editlockconfig | Removes all entries for a boss or event. Any bosses or events with no entries will be unable to be spawned. |
-| resetconfig | uselockcommands, editlockconfig | Resets lock config to its default state. |
+| help | `lock.uselockcommands` | Provides syntax and help text for a given command. |
+| commandlist | `lock.uselockcommands` | Offers a list of commands available to the caller. |
+| syntax | `lock.uselockcommands` | Gives an overaching description of the format used for commands. |
+| bosslist | `lock.uselockcommands` | Shows a list of all bosses and events by name. |
+| current | `lock.uselockcommands` | Yields the current availability of a named boss or event. |
+| next | `lock.uselockcommands` | Tells the next entry for a named boss or event. |
+| servertime | `lock.uselockcommands` | Returns the number of hours since server start. |
+| starttime | `lock.uselockcommands`, `lock.editlockconfig` | Shows start time and date for plugin. When provided a time (in hours), adjusts it by that many hours. |
+| addrule | `lock.uselockcommands`, `lock.editlockconfig` | Adds a new entry for a boss or event. You may have multiple entries, whereby the most recent takes presidence. |
+| deletenext | `lock.uselockcommands`, `lock.editlockconfig` | Removes the next entry for a boss or event. If this leaves a boss/event with no entries, it cannot be spawned. |
+| deleteall | `lock.uselockcommands`, `lock.editlockconfig` | Removes all entries for a boss or event. Any bosses or events with no entries will be unable to be spawned. |
+| resetconfig | `lock.uselockcommands`, `lock.editlockconfig` | Resets lock config to its default state. |
