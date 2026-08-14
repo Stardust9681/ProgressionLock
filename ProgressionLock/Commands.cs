@@ -5,6 +5,7 @@ using TShockAPI;
 using Terraria;
 
 using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework;
 
 namespace ProgressionLock
 {
@@ -346,7 +347,6 @@ namespace ProgressionLock
 			caller.SendMessage($"Reset server config", ProgressionPlugin.InfoColor);
 			TShock.Log.Warn($"Player '{caller.Name}' fully reset config.");
 		}
-
 		public static void LockCommandList(TSPlayer caller, List<string> args)
 		{
 			System.Text.StringBuilder builder = new System.Text.StringBuilder("List of commands for \"/lock:\" ");
@@ -360,7 +360,7 @@ namespace ProgressionLock
 			{
 				builder.Append($"{cmd.CommandNames.First()}, ");
 			}
-			caller.SendMessage(builder.ToString(), ProgressionPlugin.InfoColor);
+			caller.SendMessage(builder.ToString(), Main.OurFavoriteColor);
 		}
 		public static void LockHelp(TSPlayer caller, List<string> args)
 		{
@@ -382,20 +382,24 @@ namespace ProgressionLock
 
 			caller.SendMessage($"/lock help '{commandName}':" +
 				$"\nSyntax: {CommandList[cmdIndex].Syntax}" +
-				$"\nDescription: {CommandList[cmdIndex].HelpDesc}", ProgressionPlugin.InfoColor);
+				$"\nDescription: {CommandList[cmdIndex].HelpDesc}", Main.OurFavoriteColor);
 		}
 		public static void LockSyntax(TSPlayer caller, List<string> args)
 		{
 			caller.SendMessage($"Command Syntax Help:" +
-				$"\nAnything in <these> is a necessary command argument. You must include it in the command." +
-				$"\nAnything in [these] is an optional command argument. You may opt not to include it." +
-				$"\n\"Quotation marks\" are used to ensure arguments passed in are read as intended. Any parameters with spaces should be surrounded by quotation marks." +
+				$"\nAnything in {WithColor("<these>", Main.OurFavoriteColor)} is a necessary command argument. You must include it in the command." +
+				$"\nAnything in {WithColor("[these]", Main.OurFavoriteColor)} is an optional command argument. You may opt not to include it." +
+				$"\n{WithColor("\"Quotation marks\"", Main.OurFavoriteColor)} are used to ensure arguments passed in are read as intended. Any parameters with spaces should be surrounded by quotation marks." +
 				$"\nFor this plugin (any commands branching off of /lock), you may opt to define bosses and events by abbreviation (ex: King Slime = KS)" +
-				$"\n    You may also shorten boss names (ex: Destroyer = Dest), though take caution for bosses with shared names (ex: Queen Bee and Queen Slime)", ProgressionPlugin.InfoColor);
+				$"\n    {WithColor("You may also shorten boss names (ex: Destroyer = Dest), though take caution for bosses with shared names (ex: Queen Bee and Queen Slime)", ProgressionPlugin.InfoColor)}", Color.White);
 		}
 
 		//I don't feel like writing new string[] { a, .. } I'm lazy
 		private static string[] Compose(params string[] args) => args;
+		private static string WithColor(string text, Color col)
+		{
+			return $"[c/{col.Hex3()}:{text}]";
+		}
 		static Commands()
 		{
 			CommandList.Add(new SubCommand(LockHelp, "help", "sos")

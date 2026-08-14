@@ -18,7 +18,7 @@ namespace ProgressionLock
 		public override string Name => "Progressionlock";
 		public override string Author => "Stardust";
 		public override string Description => "Toggle when bosses and events can or cannot be spawned (by the hour)";
-		public override Version Version => new Version(1, 2);
+		public override Version Version => new Version(1, 2, 1);
 
 		private static ProgressionLockerConfig config;
 		public static ProgressionLockerConfig Config
@@ -64,8 +64,8 @@ namespace ProgressionLock
 			return true;
 		}
 
-		public static Color ErrorColour => Color.IndianRed;
-		public static Color InfoColor => Color.LightSeaGreen;
+		public static Color ErrorColour => Color.Red;
+		public static Color InfoColor => Color.PaleTurquoise;
 
 		private Dictionary<Entities, bool> ignoreCheck = new Dictionary<Entities, bool>()
 		{
@@ -190,8 +190,6 @@ namespace ProgressionLock
 			Entities type = EntityTypeExtensions.FromID(npc.type);
 			if (type is Entities.UnusedOrError)
 				return;
-
-			TSPlayer.All.SendMessage($"{npc.FullName}", Color.MediumAquamarine);
 
 			if (!config.TryGetRecent(type, out LockDate date) || !date.AllowedToSpawn)
 			{
